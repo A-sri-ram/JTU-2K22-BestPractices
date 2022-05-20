@@ -9,6 +9,7 @@ import logging
 
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
+
 class UserSerializer(ModelSerializer):
     def create(self, validated_data):
         """ 
@@ -19,9 +20,9 @@ class UserSerializer(ModelSerializer):
         return user
 
     class Meta(object):
-        model : User = User
-        fields : Tuple[str, str, str] = ('id', 'username', 'password')
-        extra_kwargs : dict[str, dict[str, bool]] = {
+        model: User = User
+        fields: Tuple[str, str, str] = ('id', 'username', 'password')
+        extra_kwargs: dict[str, dict[str, bool]] = {
             'password': {'write_only': True}
         }
 
@@ -29,25 +30,26 @@ class UserSerializer(ModelSerializer):
 class CategorySerializer(ModelSerializer):
     class Meta(object):
         model = Category
-        fields : str = '__all__'
+        fields: str = '__all__'
 
 
 class GroupSerializer(ModelSerializer):
-    members : UserSerializer = UserSerializer(many=True, required=False)
+    members: UserSerializer = UserSerializer(many=True, required=False)
 
     class Meta(object):
-        model : Groups = Groups
-        fields : str = '__all__'
+        model: Groups = Groups
+        fields: str = '__all__'
 
 
 class UserExpenseSerializer(ModelSerializer):
     class Meta(object):
-        model : UserExpense = UserExpense
-        fields : List[str]= ['user', 'amount_owed', 'amount_lent']
+        model: UserExpense = UserExpense
+        fields: List[str] = ['user', 'amount_owed', 'amount_lent']
 
 
 class ExpensesSerializer(ModelSerializer):
-    users : UserExpenseSerializer= UserExpenseSerializer(many=True, required=True)
+    users: UserExpenseSerializer = UserExpenseSerializer(
+        many=True, required=True)
 
     def create(self, validated_data):
         """
@@ -92,9 +94,8 @@ class ExpensesSerializer(ModelSerializer):
             logging.error('Single user appears multiple times')
             raise ValidationError('Single user appears multiple times')
 
-
         return attrs
 
     class Meta(object):
         model = Expenses
-        fields : str = '__all__'
+        fields: str = '__all__'

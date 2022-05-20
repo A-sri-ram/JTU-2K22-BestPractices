@@ -20,6 +20,8 @@ from restapi.custom_exception import UnauthorizedUserException
 import logging
 
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
+
+
 def index(_request) -> HttpResponse:
     return HttpResponse("Hello, world. You're at Rest.")
 
@@ -86,20 +88,22 @@ def normalize(expense):
 
 
 class user_view_set(ModelViewSet):
-    queryset : QuerySet = User.objects.all()
-    serializer_class : CategorySerializer = UserSerializer
-    permission_classes : tuple = (AllowAny,)
+    queryset: QuerySet = User.objects.all()
+    serializer_class: CategorySerializer = UserSerializer
+    permission_classes: tuple = (AllowAny,)
 
-# Obtains categories 
+# Obtains categories
+
+
 class category_view_set(ModelViewSet):
-    queryset : Queryset = Category.objects.all()
-    serializer_class : CategorySerializer  = CategorySerializer
-    http_method_names : List[str] = ['get', 'post']
+    queryset: Queryset = Category.objects.all()
+    serializer_class: CategorySerializer = CategorySerializer
+    http_method_names: List[str] = ['get', 'post']
 
 
 class group_view_set(ModelViewSet):
-    queryset : Queryset  = Groups.objects.all()
-    serializer_class : GroupSerializer = GroupSerializer
+    queryset: Queryset = Groups.objects.all()
+    serializer_class: GroupSerializer = GroupSerializer
 
     def get_queryset(self):
         user = self.request.user
@@ -149,7 +153,8 @@ class group_view_set(ModelViewSet):
         """
         group = Groups.objects.get(id=pk)
         if group not in self.get_queryset():
-            logging.error(f"[Unauthorized]: No objects group with {pk} is found")
+            logging.error(
+                f"[Unauthorized]: No objects group with {pk} is found")
             raise UnauthorizedUserException()
         expenses = group.expenses_set
         serializer = ExpensesSerializer(expenses, many=True)
@@ -158,7 +163,7 @@ class group_view_set(ModelViewSet):
 
     @action(methods=['get'], detail=True)
     def balances(self, _request, pk=None) -> Response:
-        
+
         group = Groups.objects.get(id=pk)
         if group not in self.get_queryset():
             raise UnauthorizedUserException()
