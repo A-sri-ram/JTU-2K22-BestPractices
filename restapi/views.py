@@ -26,7 +26,9 @@ def index(_request) -> HttpResponse:
 
 @api_view(['POST'])
 def logout(request) -> Response:
-    
+    """
+    User authenication token will be deleted
+    """
     request.user.auth_token.delete()
     logging.info("[LOGOUT]: User authenication token is deleted")
     return Response(status=status.HTTP_204_NO_CONTENT)
@@ -34,6 +36,9 @@ def logout(request) -> Response:
 
 @api_view(['GET'])
 def balance(request) -> Response:
+    """
+    Returns the final balance of user
+    """
     user = request.user
     expenses: Expenses.objects = Expenses.objects.filter(
         users__in=user.expenses.all())
@@ -85,7 +90,7 @@ class user_view_set(ModelViewSet):
     serializer_class : CategorySerializer = UserSerializer
     permission_classes : tuple = (AllowAny,)
 
-
+# Obtains categories 
 class category_view_set(ModelViewSet):
     queryset : Queryset = Category.objects.all()
     serializer_class : CategorySerializer  = CategorySerializer
@@ -105,6 +110,9 @@ class group_view_set(ModelViewSet):
         return groups
 
     def create(self, request, *args, **kwargs) -> Response:
+        """
+        Creates an group 
+        """
         user = self.request.user
         data = self.request.data
         group = Groups(**data)
@@ -116,6 +124,9 @@ class group_view_set(ModelViewSet):
 
     @action(methods=['put'], detail=True)
     def members(self, request, pk=None) -> Response:
+        """
+        Add/Remove users from the group
+        """
         group = Groups.objects.get(id=pk)
         if group not in self.get_queryset():
             raise UnauthorizedUserException()
@@ -133,6 +144,9 @@ class group_view_set(ModelViewSet):
 
     @action(methods=['get'], detail=True)
     def expenses(self, _request, pk=None) -> Response:
+        """
+        Returns sum of expenses of members in the group
+        """
         group = Groups.objects.get(id=pk)
         if group not in self.get_queryset():
             logging.error(f"[Unauthorized]: No objects group with {pk} is found")
@@ -144,6 +158,7 @@ class group_view_set(ModelViewSet):
 
     @action(methods=['get'], detail=True)
     def balances(self, _request, pk=None) -> Response:
+        
         group = Groups.objects.get(id=pk)
         if group not in self.get_queryset():
             raise UnauthorizedUserException()

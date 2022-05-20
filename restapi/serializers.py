@@ -11,6 +11,9 @@ logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
 class UserSerializer(ModelSerializer):
     def create(self, validated_data):
+        """ 
+        Creates and user
+        """
         user = User.objects.create_user(**validated_data)
         logging.info("CREATE: User is created")
         return user
@@ -47,6 +50,9 @@ class ExpensesSerializer(ModelSerializer):
     users : UserExpenseSerializer= UserExpenseSerializer(many=True, required=True)
 
     def create(self, validated_data):
+        """
+        Creates an Expense
+        """
         expense_users = validated_data.pop('users')
         expense = Expenses.objects.create(**validated_data)
         logging.info("CREATE: expense is created")
@@ -55,6 +61,9 @@ class ExpensesSerializer(ModelSerializer):
         return expense
 
     def update(self, instance, validated_data):
+        """
+        Updates and saves expense
+        """
         user_expenses = validated_data.pop('users')
         instance.description = validated_data['description']
         instance.category = validated_data['category']
@@ -74,6 +83,9 @@ class ExpensesSerializer(ModelSerializer):
         return instance
 
     def validate(self, attrs):
+        """
+        Validates user. Throws an errow if single user appears multiple times
+        """
         # user = self.context['request'].user
         user_ids = [user['user'].id for user in attrs['users']]
         if len(set(user_ids)) != len(user_ids):
