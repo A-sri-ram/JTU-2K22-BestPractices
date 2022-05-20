@@ -1,9 +1,10 @@
+from typing import List, Tuple
 from rest_framework.serializers import ModelSerializer
 from rest_framework.serializers import ValidationError
 from django.contrib.auth.models import User
 
 from restapi.models import Category, Groups, UserExpense, Expenses
-
+from typing import Tuple
 
 class UserSerializer(ModelSerializer):
     def create(self, validated_data):
@@ -11,9 +12,9 @@ class UserSerializer(ModelSerializer):
         return user
 
     class Meta(object):
-        model = User
-        fields = ('id', 'username', 'password')
-        extra_kwargs = {
+        model : User = User
+        fields : Tuple[str, str, str] = ('id', 'username', 'password')
+        extra_kwargs : dict[str, dict[str, bool]] = {
             'password': {'write_only': True}
         }
 
@@ -21,25 +22,25 @@ class UserSerializer(ModelSerializer):
 class CategorySerializer(ModelSerializer):
     class Meta(object):
         model = Category
-        fields = '__all__'
+        fields : str = '__all__'
 
 
 class GroupSerializer(ModelSerializer):
-    members = UserSerializer(many=True, required=False)
+    members : UserSerializer = UserSerializer(many=True, required=False)
 
     class Meta(object):
-        model = Groups
-        fields = '__all__'
+        model : Groups = Groups
+        fields : str = '__all__'
 
 
 class UserExpenseSerializer(ModelSerializer):
     class Meta(object):
-        model = UserExpense
-        fields = ['user', 'amount_owed', 'amount_lent']
+        model : UserExpense = UserExpense
+        fields : List[str]= ['user', 'amount_owed', 'amount_lent']
 
 
 class ExpensesSerializer(ModelSerializer):
-    users = UserExpenseSerializer(many=True, required=True)
+    users : UserExpenseSerializer= UserExpenseSerializer(many=True, required=True)
 
     def create(self, validated_data):
         expense_users = validated_data.pop('users')
@@ -72,31 +73,9 @@ class ExpensesSerializer(ModelSerializer):
         if len(set(user_ids)) != len(user_ids):
             raise ValidationError('Single user appears multiple times')
 
-        # if data.get('group', None) is not None:
-        #     group = Groups.objects.get(pk=data['group'].id)
-        #     group_users = group.members.all()
-        #     if user not in group_users:
-        #         raise UnauthorizedUserException()
-        #     for user in data['users']:
-        #         if user['user'] not in group_users:
-        #             raise ValidationError('Only group members should be listed in a group transaction')
-        # else:
-        #     if user.id not in user_ids:
-        #         raise ValidationError('For non-group expenses, user should be part of expense')
-
-        # total_amount = data['total_amount']
-        # amount_owed = 0
-        # amount_lent = 0
-        # for user in data['users']:
-        #     if user['amount_owed'] < 0 or user['amount_lent'] < 0 or total_amount < 0:
-        #         raise ValidationError('Expense amounts must be positive')
-        #     amount_owed += user['amount_owed']
-        #     amount_lent += user['amount_lent']
-        # if amount_lent != amount_owed or amount_lent != total_amount:
-        #     raise ValidationError('Given amounts are inconsistent')
 
         return attrs
 
     class Meta(object):
         model = Expenses
-        fields = '__all__'
+        fields : str = '__all__'

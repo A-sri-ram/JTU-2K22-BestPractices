@@ -11,22 +11,23 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from typing import Dict, List, Union
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR : str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '$%g=*x547u*)84y)37pbm(2(4ravpv#o6+h1w@f0-*#552um-e'
+SECRET_KEY : str = '$%g=*x547u*)84y)37pbm(2(4ravpv#o6+h1w@f0-*#552um-e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG : bool = True
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS : list[str] = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,7 +39,7 @@ INSTALLED_APPS = [
     'restapi'
 ]
 
-MIDDLEWARE = [
+MIDDLEWARE : list[str] = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,7 +51,10 @@ MIDDLEWARE = [
 
 ]
 
-REST_FRAMEWORK = {
+# We could static type below variable as : Dict[str, x ], if we are sure about what data types that x can take (using Union)
+# Lets say x could be Union[str, List[str], int]
+
+REST_FRAMEWORK  = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_PERMISSION_CLASSES': [
@@ -64,6 +68,8 @@ REST_FRAMEWORK = {
 DEFAULT_PORT = "8080"
 ROOT_URLCONF = 'cjapp.urls'
 
+# We could static type below variable as : List[Dict[str, x ]], if we are sure about what data types that x can take (using Union)
+# Lets say x could be Union[str, List[str], int, bool, Dict[str, List[str]]]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -80,7 +86,8 @@ TEMPLATES = [
     },
 ]
 
-
+# We could static type below variable as : Dict[str, x ], if we are sure about what data types that x can take (using Union)
+# Lets say x could be Union[str, List[str], int, bool, Dict[str, Dict[str, str]]]
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -111,11 +118,11 @@ LOGGING = {
 
 }
 
-WSGI_APPLICATION = 'cjapp.wsgi.application'
+WSGI_APPLICATION : str = 'cjapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = {
+DATABASES: Dict[str, dict[str: str]] = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
@@ -125,7 +132,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
+AUTH_PASSWORD_VALIDATORS : List[Dict[str, str]] = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
@@ -143,21 +150,21 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE:str = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE : str = 'UTC'
 
-USE_I18N = True
+USE_I18N : bool = True
 
-USE_L10N = True
+USE_L10N : bool = True
 
-USE_TZ = True
+USE_TZ : bool = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS : List[str] = ['*']
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL : bool = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL:str = '/static/'
