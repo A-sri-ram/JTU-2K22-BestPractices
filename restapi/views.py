@@ -17,15 +17,18 @@ from rest_framework import status
 
 from restapi.serializers import CategorySerializer, Expenses, ExpensesSerializer, Groups, GroupSerializer, UserExpense, UserSerializer, Category
 from restapi.custom_exception import UnauthorizedUserException
+import logging
 
-
+logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 def index(_request) -> HttpResponse:
     return HttpResponse("Hello, world. You're at Rest.")
 
 
 @api_view(['POST'])
 def logout(request) -> Response:
+    
     request.user.auth_token.delete()
+    logging.info("[LOGOUT]: User authenication token is deleted")
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -108,6 +111,7 @@ class group_view_set(ModelViewSet):
         group.save()
         group.members.add(user)
         serializer = self.get_serializer(group)
+        logging.info("[CREATE]: group is created")
         return Response(serializer.data, status=201)
 
     @action(methods=['put'], detail=True)
@@ -131,9 +135,11 @@ class group_view_set(ModelViewSet):
     def expenses(self, _request, pk=None) -> Response:
         group = Groups.objects.get(id=pk)
         if group not in self.get_queryset():
+            logging.error(f"[Unauthorized]: No objects group with {pk} is found")
             raise UnauthorizedUserException()
         expenses = group.expenses_set
         serializer = ExpensesSerializer(expenses, many=True)
+
         return Response(serializer.data, status=200)
 
     @action(methods=['get'], detail=True)
@@ -191,9 +197,11 @@ def logProcessor(request) -> Response:
     num_threads = data['parallelFileProcessingCount']
     log_files = data['logFiles']
     if num_threads <= 0 or num_threads > 30:
+        logging.info("Parallel Processing Count out of expected bounds")
         return Response({"status": "failure", "reason": "Parallel Processing Count out of expected bounds"},
                         status=status.HTTP_400_BAD_REQUEST)
     if len(log_files) == 0:
+        logging.info("No log files provided in request")
         return Response({"status": "failure", "reason": "No log files provided in request"},
                         status=status.HTTP_400_BAD_REQUEST)
     logs = multiThreadedReader(
@@ -202,6 +210,7 @@ def logProcessor(request) -> Response:
     cleaned = transform(sorted_logs)
     data = aggregate(cleaned)
     response = response_format(data)
+    logging.info("Logs are processed.")
     return Response({"response": response}, status=status.HTTP_200_OK)
 
 
