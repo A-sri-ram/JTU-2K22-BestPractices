@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+from restapi.constants import CATEGORY_MAX_LENGTH, GROUP_MAX_LENGTH, EXPENSE_DESCRIPTION_MAX_LENGTH , EXPENSE_MAX_DIGITS \
+                                EXPENSE_DECIMAL_PLACES
 from django.db import models
 
 # Create your models here.
@@ -8,19 +9,19 @@ from django.contrib.auth.models import User
 
 
 class Category(models.Model):
-    name: models.CharField = models.CharField(max_length=200, null=False)
+    name: models.CharField = models.CharField(max_length=CATEGORY_MAX_LENGTH, null=False)
 
 
 class Groups(models.Model):
-    name: models.CharField = models.CharField(max_length=100, null=False)
+    name: models.CharField = models.CharField(max_length=GROUP_MAX_LENGTH, null=False)
     members: models.ManyToManyField = models.ManyToManyField(
         User, related_name='members', blank=True)
 
 
 class Expenses(models.Model):
-    description: models.CharField = models.CharField(max_length=200)
+    description: models.CharField = models.CharField(max_length=EXPENSE_DESCRIPTION_MAX_LENGTH)
     total_amount: models.DecimalField = models.DecimalField(
-        max_digits=10, decimal_places=2)
+        max_digits=EXPENSE_MAX_DIGITS, decimal_places=EXPENSE_DECIMAL_PLACES)
     group: models.ForeignKey = models.ForeignKey(
         Groups, null=True, on_delete=models.CASCADE)
     category: models.ForeignKey = models.ForeignKey(
@@ -33,9 +34,9 @@ class UserExpense(models.Model):
     user: models.ForeignKey = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="expenses")
     amount_owed: models.DecimalField = models.DecimalField(
-        max_digits=10, decimal_places=2)
+        max_digits=EXPENSE_MAX_DIGITS, decimal_places=EXPENSE_DECIMAL_PLACES)
     amount_lent: models.DecimalField = models.DecimalField(
-        max_digits=10, decimal_places=2)
+        max_digits=EXPENSE_MAX_DIGITS, decimal_places=EXPENSE_DECIMAL_PLACES)
 
     def __str__(self) -> str:
         return f"user: {self.user}, amount_owed: {self.amount_owed} amount_lent: {self.amount_lent}"
