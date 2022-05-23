@@ -92,7 +92,7 @@ def normalize(expense):
     return balances
 
 
-class user_view_set(ModelViewSet):
+class UserViewSet(ModelViewSet):
     queryset: QuerySet = User.objects.all()
     serializer_class: CategorySerializer = UserSerializer
     permission_classes: tuple = (AllowAny,)
@@ -100,13 +100,13 @@ class user_view_set(ModelViewSet):
 # Obtains categories
 
 
-class category_view_set(ModelViewSet):
+class CategoryViewSet(ModelViewSet):
     queryset: Queryset = Category.objects.all()
     serializer_class: CategorySerializer = CategorySerializer
     http_method_names: List[str] = ['get', 'post']
 
 
-class group_view_set(ModelViewSet):
+class GroupViewSet(ModelViewSet):
     queryset: Queryset = Groups.objects.all()
     serializer_class: GroupSerializer = GroupSerializer
 
@@ -208,7 +208,7 @@ class group_view_set(ModelViewSet):
         return Response(balances, status=status.HTTP_200_OK)
 
 
-class expenses_view_set(ModelViewSet):
+class ExpensesViewSet(ModelViewSet):
     queryset: QuerySet = Expenses.objects.all()
     serializer_class = ExpensesSerializer
 
@@ -225,7 +225,7 @@ class expenses_view_set(ModelViewSet):
 @api_view(['post'])
 @authentication_classes([])
 @permission_classes([])
-def logProcessor(request) -> Response:
+def log_processor(request) -> Response:
     data = request.data
     num_threads = data['parallelFileProcessingCount']
     log_files = data['logFiles']
@@ -237,7 +237,7 @@ def logProcessor(request) -> Response:
         logging.info("No log files provided in request")
         return Response({"status": "failure", "reason": "No log files provided in request"},
                         status=status.HTTP_400_BAD_REQUEST)
-    logs = multiThreadedReader(
+    logs = multi_threaded_reader(
         urls=data['logFiles'], num_threads=data['parallelFileProcessingCount'])
     sorted_logs = sort_by_time_stamp(logs)
     cleaned = transform(sorted_logs)
