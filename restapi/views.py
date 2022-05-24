@@ -57,14 +57,8 @@ def balance(request) -> Response:
                     from_user, 0) + eb['amount']
     final_balance = {k: v for k, v in final_balance.items() if v != 0}
 
-<<<<<<< Updated upstream
-    response = [{"user": k, "amount": int(v)}
-                for k, v in final_balance.items()]
-    return Response(response, status=200)
-=======
     response = [{"user": k, "amount": int(v)} for k, v in final_balance.items()]
     return Response(response, status=status.HTTP_200_OK)
->>>>>>> Stashed changes
 
 
 def normalize(expense):
@@ -127,12 +121,7 @@ class GroupViewSet(ModelViewSet):
         group.save()
         group.members.add(user)
         serializer = self.get_serializer(group)
-<<<<<<< Updated upstream
-        logging.info("[CREATE]: group is created")
-        return Response(serializer.data, status=201)
-=======
         return Response(serializer.data, status=status.HTTP_201_CREATED)
->>>>>>> Stashed changes
 
     @action(methods=['put'], detail=True)
     def members(self, request, pk=None) -> Response:
@@ -166,12 +155,7 @@ class GroupViewSet(ModelViewSet):
             raise UnauthorizedUserException()
         expenses = group.expenses_set
         serializer = ExpensesSerializer(expenses, many=True)
-<<<<<<< Updated upstream
-
-        return Response(serializer.data, status=200)
-=======
         return Response(serializer.data, status=status.HTTP_200_OK)
->>>>>>> Stashed changes
 
     @action(methods=['get'], detail=True)
     def balances(self, _request, pk=None) -> Response:
